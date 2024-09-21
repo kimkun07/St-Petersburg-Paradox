@@ -2,6 +2,8 @@ import math
 from scipy import stats
 import matplotlib.pyplot as plt
 
+from .Stopwatch import Stopwatch
+
 
 def probability_of_not_losing(n: int, p: float, payoff: float, cost: int) -> float:
     """Play a game `n` times with probability `p` of winning $`payoff`.
@@ -26,27 +28,64 @@ def probability_of_not_losing(n: int, p: float, payoff: float, cost: int) -> flo
     return prob
 
 
-if __name__ == "__main__":
+def simulate(x_data: list[int], exponent: int, cost: int) -> list[float]:
+    # E[X] = p * payoff = 10
+    p, payoff = (1 / 2) ** exponent, 10 * 2**exponent
+
     # Simulate games
-    games = [1, 10, 100, 1000, 10_000, 100_000]
-    costs = [9, 10, 11]
-    probabilities: dict[int, list[float]] = {cost: [] for cost in costs}
+    probabilities: list[float] = []
+    for game in x_data:
+        probabilities.append(
+            probability_of_not_losing(n=game, p=p, payoff=payoff, cost=cost)
+        )
 
-    for game in games:
-        for cost in costs:
-            probabilities[cost].append(
-                probability_of_not_losing(n=game, p=1 / 4, payoff=40, cost=cost)
-            )
+    return probabilities
 
-    for cost in costs:
-        plt.plot(games, probabilities[cost], marker="o", label=f"Cost: {cost}")
+
+def plot_different_costs(exponent: int, simulate_max_games: int) -> None:
+    x_data = list(range(1, simulate_max_games))
+    for cost in [9, 10, 11]:
+        y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
+        plt.plot(x_data, y_data, marker="o", label=f"Cost: {cost}")
 
     plt.xlabel("Number of Games")
     plt.ylabel("Probability")
-    plt.title("Probability vs Number of Games for Different Costs")
+    plt.title(f"p: 1/2^{exponent}")
     plt.legend()
     plt.xscale("log")
+    plt.ylim(0, 1)
     plt.grid(True)
-    # plt.show()
+    plt.show()
 
-    plt.savefig("p=0.25.png")
+
+def plot_different_exponents(cost: int, simulate_max_games: int) -> None:
+    x_data = list(range(1, simulate_max_games))
+    for exponent in [2, 10, 20]:
+        y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
+        plt.plot(x_data, y_data, marker="o", label=f"p=1/2^{exponent}")
+
+    plt.xlabel("Number of Games")
+    plt.ylabel("Probability")
+    plt.title(f"Cost: {cost}")
+    plt.legend()
+    plt.xscale("log")
+    plt.ylim(0, 1)
+    plt.grid(True)
+    plt.show()
+
+
+if __name__ == "__main__":
+    max_games = 100_000
+    # |max_games|Elapsed Time|
+    # |---|---|
+    # |100_000|7 seconds|
+    with Stopwatch() as sw:
+        plot_different_costs(exponent=2, simulate_max_games=max_games)
+        plot_different_costs(exponent=10, simulate_max_games=max_games)
+        plot_different_costs(exponent=20, simulate_max_games=max_games)
+
+        plot_different_exponents(cost=9, simulate_max_games=max_games)
+        plot_different_exponents(cost=10, simulate_max_games=max_games)
+        plot_different_exponents(cost=11, simulate_max_games=max_games)
+
+    print(f"Elapsed: {sw.elapsed_time()}")
