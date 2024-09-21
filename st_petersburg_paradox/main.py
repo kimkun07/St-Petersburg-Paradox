@@ -42,43 +42,46 @@ def simulate(x_data: list[int], exponent: int, cost: int) -> list[float]:
     return probabilities
 
 
-def plot_different_costs(exponent: int, simulate_max_games: int) -> None:
-    x_data = list(range(1, simulate_max_games))
-    for cost in [9, 10, 11]:
-        y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
-        plt.plot(x_data, y_data, marker="o", label=f"Cost: {cost}")
-
+def show(title: str):
     plt.xlabel("Number of Games")
     plt.ylabel("Probability")
-    plt.title(f"p: 1/2^{exponent}")
+    plt.title(title)
     plt.legend()
     plt.xscale("log")
     plt.ylim(0, 1)
     plt.grid(True)
-    plt.show()
+    plt.show(block=False)
+    plt.pause(1)  # too short interval may cause blank plot window
+
+
+def plot_different_costs(exponent: int, simulate_max_games: int) -> None:
+    plt.figure()
+
+    x_data = list(range(1, simulate_max_games))
+    for cost in [9, 10, 11]:
+        y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
+        plt.plot(x_data, y_data, marker="o", label=f"Cost={cost}")
+
+    show(f"p=1/2^{exponent}")
 
 
 def plot_different_exponents(cost: int, simulate_max_games: int) -> None:
+    plt.figure()
+
     x_data = list(range(1, simulate_max_games))
     for exponent in [2, 10, 20]:
         y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
         plt.plot(x_data, y_data, marker="o", label=f"p=1/2^{exponent}")
 
-    plt.xlabel("Number of Games")
-    plt.ylabel("Probability")
-    plt.title(f"Cost: {cost}")
-    plt.legend()
-    plt.xscale("log")
-    plt.ylim(0, 1)
-    plt.grid(True)
-    plt.show()
+    show(f"Cost={cost}")
 
 
 if __name__ == "__main__":
     max_games = 100_000
     # |max_games|Elapsed Time|
     # |---|---|
-    # |100_000|7 seconds|
+    # |100_000|10 seconds|
+
     with Stopwatch() as sw:
         plot_different_costs(exponent=2, simulate_max_games=max_games)
         plot_different_costs(exponent=10, simulate_max_games=max_games)
@@ -89,3 +92,4 @@ if __name__ == "__main__":
         plot_different_exponents(cost=11, simulate_max_games=max_games)
 
     print(f"Elapsed: {sw.elapsed_time()}")
+    input("Press Enter to close the plot...")
