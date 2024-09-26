@@ -1,0 +1,35 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage{kotex}
+\usepackage{lmodern}
+
+\begin{document}
+
+% 논문 순서 1: 외표지
+\input{cover.tex}
+
+% 논문 순서 2: 속표지
+\input{cover.tex}
+
+% 논문 순서 3: 국문초록
+\input{00-abstract-ko.tex}
+
+% 논문 순서 4: 목차
+\tableofcontents
+
+% 논문 순서 5: 본문
+\chapter{서론}
+\input{01-intro.tex}
+
+\chapter{이론적 배경}
+\input{02-background.tex}
+
+\chapter{결론}
+
+% 논문 순서 6: 참고문헌
+
+% 논문 순서 7: (부록)
+
+% 논문 순서 8: 영문초록
+\input{00-abstract-en.tex}
+
+\end{document}
