@@ -1,17 +1,32 @@
 \documentclass[a4paper,11pt]{report}
 \usepackage{kotex}
-\usepackage{lmodern}
+% 본문 내용 : 글자크기 11pt 정도, 줄간격 170 이상, 장평 100, 자간 0
+\linespread{1.4} % 줄간격 170인듯?
+
+% 각주 : 글자 크기 9~10pt
+
+% 서체 : 명조체나 신명조체 류
+
+% 용지 여백 : 위쪽 30, 아래쪽 15, 왼쪽 25, 오른쪽 25
 
 \begin{document}
 
 % 논문 순서 1: 외표지
-\input{cover.tex}
+\begin{titlepage}
+  \centering
+  \input{cover.tex}
+\end{titlepage}
 
 % 논문 순서 2: 속표지
-\input{cover.tex}
+\begin{titlepage}
+  \centering
+  \input{cover.tex}
+\end{titlepage}
 
 % 논문 순서 3: 국문초록
-\input{00-abstract-ko.tex}
+\begin{abstract}
+  \input{00-abstract-ko.tex}
+\end{abstract}
 
 % 논문 순서 4: 목차
 \tableofcontents
@@ -22,6 +37,10 @@
 
 \chapter{이론적 배경}
 \input{02-background.tex}
+
+\chapter{Simple Game}
+
+\chapter{St Petersburg Game}
 
 \chapter{결론}
 
