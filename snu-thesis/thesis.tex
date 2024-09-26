@@ -9,6 +9,9 @@
 
 % 용지 여백 : 위쪽 30, 아래쪽 15, 왼쪽 25, 오른쪽 25
 
+\usepackage{graphicx}
+\graphicspath{ {../images/} }
+
 \begin{document}
 
 % 논문 순서 1: 외표지
@@ -38,9 +41,14 @@
 \chapter{이론적 배경}
 \input{02-background.tex}
 
-\chapter{Simple Game}
+\chapter{간단한 게임}
+\input{03-simple-game.tex}
 
-\chapter{St Petersburg Game}
+\chapter{주장}
+\input{04-statement.tex}
+
+\chapter{St. Petersburg Game}
+\input{05-st-petersburg-game.tex}
 
 \chapter{결론}
 
@@ -49,6 +57,8 @@
 % 논문 순서 7: (부록)
 
 % 논문 순서 8: 영문초록
-\input{00-abstract-en.tex}
+\begin{abstract}
+  \input{00-abstract-en.tex}
+\end{abstract}
 
 \end{document}
