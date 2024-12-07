@@ -8,7 +8,7 @@
       "type": "shell",
       "command": "poetry run python -m st_petersburg_paradox.main",
       "group": {
-        "kind": "build",
+        "kind": "test",
         "isDefault": true
       }
     }

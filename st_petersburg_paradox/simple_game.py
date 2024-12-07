@@ -29,6 +29,16 @@ def probability_of_not_losing(n: int, p: float, payoff: float, cost: int) -> flo
 
 
 def simulate(x_data: list[int], exponent: int, cost: int) -> list[float]:
+    """Given x_data, return probability_data for plot
+
+    Args:
+        x_data: List of `n`s to simulate
+        exponent: _description_
+        cost: _description_
+
+    Returns:
+        _description_
+    """
     # E[X] = p * payoff = 10
     p, payoff = (1 / 2) ** exponent, 10 * 2**exponent
 
@@ -76,12 +86,13 @@ def plot_different_exponents(cost: int, simulate_max_games: int) -> None:
     show(f"Cost={cost}")
 
 
-if __name__ == "__main__":
+def main():
     max_games = 100_000
     # |max_games|Elapsed Time|
     # |---|---|
     # |100_000|10 seconds|
 
+    print(f"Plotting 6 graph for simple_game: {max_games} games per each")
     with Stopwatch() as sw:
         plot_different_costs(exponent=2, simulate_max_games=max_games)
         plot_different_costs(exponent=10, simulate_max_games=max_games)
