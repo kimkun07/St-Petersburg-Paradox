@@ -1,3 +1,4 @@
+import decimal
 from typing import Callable
 from matplotlib import pyplot as plt
 from st_petersburg_paradox.game import Game
@@ -34,11 +35,20 @@ class DataGenerator:
         Returns:
             list[int]: 게임 횟수 목록.
         """
+
+        assert scale > 1
+
         n_games_list: list[int] = []
-        n_games = 1
-        while n_games <= max_n_games:
+        n_games = max_n_games
+        # NOTE: n_games_list will be sorted in decreasing order
+        #       Coupled - StPeters can use cached result for smaller n_games
+        # NOTE: n_games cannot be odd
+        #       Coupled - StPeters needs (n_games * cost) % 2 == 0
+        while n_games >= 2:
             n_games_list.append(n_games)
-            n_games *= scale
+            n_games = n_games // scale
+            if n_games % 2 == 1:
+                n_games -= 1  # n_games += 1 -> infinite loop
         return n_games_list
 
     def generate_prob_list(self, game: Game, participation_cost: int) -> list[float]:
@@ -138,13 +148,11 @@ class ExperimentAssistant:
         )
         participation_cost_list = list(map(int, cost_str.split()))
 
-        game = StPetersburgGame()
-
         def launch(max_n_games: int):
             dg = DataGenerator(max_n_games=max_n_games)
 
-            return Experiment.experiment_for_different_cost(
-                dg, game, participation_cost_list
+            return Experiment.batch_experiment_for_different_cost(
+                dg, participation_cost_list
             )
 
         return launch
@@ -168,6 +176,20 @@ class Experiment:
         for cost in participation_cost_list:
             prob_list = dg.generate_prob_list(game, cost)
             plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
+
+    @staticmethod
+    def batch_experiment_for_different_cost(
+        dg: DataGenerator, participation_cost_list: list[int]
+    ):
+        game = StPetersburgGame()
+        n_games_list = sorted(dg.n_games_list)
+
+        results: list[list[float]] = game.batch_prob_profit_after_n_games(
+            n_games_list, participation_cost_list
+        )
+        for i, cost in enumerate(participation_cost_list):
+            prob_list = results[i]
+            plt.plot(n_games_list, prob_list, marker="o", label=f"Cost={cost}")
 
     @staticmethod
     def experiment_for_different_exponent(
@@ -194,8 +216,12 @@ class Experiment:
 
 
 if __name__ == "__main__":
+    # Set Decimal() precision
+    decimal.getcontext().prec = 50
+
     max_n_games = input_int_with_commas("Enter max_n_games: ", default=1_000_000)
     max_n_games = int(prompt_input("Selected max_n_games: ", str(max_n_games)))
+    show_many_figures = False
 
     plt.figure()
     # NOTE: you may want to start several experiments
@@ -203,6 +229,6 @@ if __name__ == "__main__":
     with Stopwatch():
         start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
 
-    show_plot(experiment_name)
-
-    input("Press Enter to close the plot...")
+    show_plot(experiment_name, show_many_figures)
+    if show_many_figures:
+        input("Press Enter to close all figures...")
