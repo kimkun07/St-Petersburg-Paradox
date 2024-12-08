@@ -1,3 +1,4 @@
+import decimal
 from typing import Callable
 from matplotlib import pyplot as plt
 from st_petersburg_paradox.game import Game
@@ -146,15 +147,12 @@ class ExperimentAssistant:
             "Cost experiments delimitered by space: ", default="9 10 11"
         )
         participation_cost_list = list(map(int, cost_str.split()))
-        participation_cost_list = list(reversed(sorted(participation_cost_list)))
-
-        game = StPetersburgGame()
 
         def launch(max_n_games: int):
             dg = DataGenerator(max_n_games=max_n_games)
 
-            return Experiment.experiment_for_different_cost(
-                dg, game, participation_cost_list
+            return Experiment.batch_experiment_for_different_cost(
+                dg, participation_cost_list
             )
 
         return launch
@@ -179,8 +177,19 @@ class Experiment:
             prob_list = dg.generate_prob_list(game, cost)
             plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
 
-        if isinstance(game, StPetersburgGame):
-            game.save_cache()
+    @staticmethod
+    def batch_experiment_for_different_cost(
+        dg: DataGenerator, participation_cost_list: list[int]
+    ):
+        game = StPetersburgGame()
+        n_games_list = sorted(dg.n_games_list)
+
+        results: list[list[float]] = game.batch_prob_profit_after_n_games(
+            n_games_list, participation_cost_list
+        )
+        for i, cost in enumerate(participation_cost_list):
+            prob_list = results[i]
+            plt.plot(n_games_list, prob_list, marker="o", label=f"Cost={cost}")
 
     @staticmethod
     def experiment_for_different_exponent(
@@ -207,6 +216,9 @@ class Experiment:
 
 
 if __name__ == "__main__":
+    # Set Decimal() precision
+    decimal.getcontext().prec = 50
+
     max_n_games = input_int_with_commas("Enter max_n_games: ", default=1_000_000)
     max_n_games = int(prompt_input("Selected max_n_games: ", str(max_n_games)))
     show_many_figures = False
