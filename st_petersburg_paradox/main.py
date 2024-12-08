@@ -39,11 +39,15 @@ class DataGenerator:
 
         n_games_list: list[int] = []
         n_games = max_n_games
-        # NOTE: n_games Cannot be 1
+        # NOTE: n_games_list will be sorted in decreasing order
+        #       Coupled - StPeters can use cached result for smaller n_games
+        # NOTE: n_games cannot be odd
         #       Coupled - StPeters needs (n_games * cost) % 2 == 0
         while n_games >= 2:
             n_games_list.append(n_games)
             n_games = n_games // scale
+            if n_games % 2 == 1:
+                n_games -= 1  # n_games += 1 -> infinite loop
         return n_games_list
 
     def generate_prob_list(self, game: Game, participation_cost: int) -> list[float]:
@@ -204,6 +208,7 @@ class Experiment:
 if __name__ == "__main__":
     max_n_games = input_int_with_commas("Enter max_n_games: ", default=1_000_000)
     max_n_games = int(prompt_input("Selected max_n_games: ", str(max_n_games)))
+    show_many_figures = False
 
     plt.figure()
     # NOTE: you may want to start several experiments
@@ -211,6 +216,6 @@ if __name__ == "__main__":
     with Stopwatch():
         start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
 
-    show_plot(experiment_name)
-
-    input("Press Enter to close the plot...")
+    show_plot(experiment_name, show_many_figures)
+    if show_many_figures:
+        input("Press Enter to close all figures...")

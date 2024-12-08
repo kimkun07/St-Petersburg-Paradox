@@ -38,12 +38,18 @@ class StPetersburgGame(Game):
     def cache_read_S(self, n: int) -> list[Decimal]:
         return self.cache[n] if self.cache_n >= n else []
 
+    def sumup_end(self, li: list[Decimal], end_index: int) -> list[Decimal]:
+        result = li[: end_index + 1]
+        for i in range(end_index + 1, len(li)):
+            result[end_index] += li[i]
+        return result
+
     def cache_update_S(self, n: int, S: list[Decimal]):
-        # NOTE: Assume len(S) > self.cache_read_S(n)
-        if n > self.cache_n:
-            #  We Assume cache[n-1] is there
-            self.cache.append([])
-        self.cache[n] = S.copy()
+        if len(S) > len(self.cache_read_S(n)):
+            if n > self.cache_n:
+                #  We Assume cache[n-1] is there
+                self.cache.append([])
+            self.cache[n] = S.copy()
 
     def prob_profit_after_n_games(self, n_games: int, participation_cost: int) -> float:
         """
@@ -65,10 +71,12 @@ class StPetersburgGame(Game):
         # 1. Pre-caculate X_i ~ St
         X_i: dict[int, Decimal] = {}
         if len(self.cache_X_i) >= (end_index + 1):
-            cache_X_i = self.cache_X_i.copy()
-            for i in range(end_index + 1, len(self.cache_X_i)):
-                cache_X_i[end_index] += self.cache_X_i[i]
-            X_i.update(enumerate(cache_X_i[: end_index + 1]))
+            # Load from cache
+            cache_X_i = self.sumup_end(self.cache_X_i, end_index)
+
+            for i, pr in enumerate(cache_X_i[: end_index + 1]):
+                if pr != Decimal(0):
+                    X_i[i] = pr
         else:
             # Let's caculate from start
             X_i: dict[int, Decimal] = {2 // 2: Decimal(1) / Decimal(2)}
@@ -92,10 +100,11 @@ class StPetersburgGame(Game):
         self.cache_update_S(1, S)
 
         for t in range(2, n_games + 1):
-            # cached_S_t = self.cache_read_S(t)
-            if False:
-                ...
+            if len(self.cache_read_S(t)) >= (end_index + 1):
+                # Load from cache
+                S = self.sumup_end(self.cache_read_S(t), end_index)
             else:
+                # Calculate from scratch
                 next_X = [Decimal(0) for _ in range(end_index + 1)]
                 for winning_prev in range(1, end_index + 1):
                     for winning, pr in X_i.items():
@@ -104,8 +113,7 @@ class StPetersburgGame(Game):
                             next_X[winning_next] + S[winning_prev] * pr
                         )
                 S = next_X
-
-            # self.cache_update_S(t, S)
+                self.cache_update_S(t, S)
 
         result = float(S[total_cost // 2])
         return result
