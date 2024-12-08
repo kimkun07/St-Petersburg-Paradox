@@ -1,5 +1,4 @@
 import math
-from decimal import Decimal, getcontext
 import matplotlib.pyplot as plt
 
 from .Stopwatch import Stopwatch
@@ -74,19 +73,3 @@ def plot_different_costs(simulate_max_games: int) -> None:
         plt.plot(x_data, y_data, marker="o", label=f"Cost={cost}")
 
     show(f"St. Petersburg Game")
-
-
-def main():
-    # Set Precision for Decimal
-    getcontext().prec = 50
-
-    max_games = 10_000
-    # |max_games|Elapsed Time|
-    # |---|---|
-    # |100_000|10 seconds|
-
-    with Stopwatch() as sw:
-        plot_different_costs(max_games)
-
-    print(f"Elapsed: {sw.elapsed_time()}")
-    input("Press Enter to close the plot...")

@@ -53,31 +53,6 @@ class DataGenerator:
         ]
 
 
-class Experiment:
-    @staticmethod
-    def experiment_for_different_cost(
-        dg: DataGenerator, game: Game, participation_cost_list: list[int]
-    ):
-        for cost in participation_cost_list:
-            prob_list = dg.generate_prob_list(game, cost)
-            plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
-
-    @staticmethod
-    def experiment_for_different_exponent(
-        dg: DataGenerator,
-        exponent_list: list[int],
-        expected_value: int = 10,
-        participation_cost: int = 10,
-    ):
-        # SimpleGame 만 해당된다.
-        for exponent in exponent_list:
-            game = SimpleGame.from_expected_value(expected_value, exponent=exponent)
-            prob_list = dg.generate_prob_list(
-                game, participation_cost=participation_cost
-            )
-            plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Pr=1/2^{exponent}")
-
-
 class ExperimentAssistant:
     SIMPLE_GAME = "SimpleGame"
     ST_GAME = "St Petersburg Game"
@@ -149,6 +124,31 @@ class ExperimentAssistant:
             )
 
         return launch
+
+
+class Experiment:
+    @staticmethod
+    def experiment_for_different_cost(
+        dg: DataGenerator, game: Game, participation_cost_list: list[int]
+    ):
+        for cost in participation_cost_list:
+            prob_list = dg.generate_prob_list(game, cost)
+            plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
+
+    @staticmethod
+    def experiment_for_different_exponent(
+        dg: DataGenerator,
+        exponent_list: list[int],
+        expected_value: int = 10,
+        participation_cost: int = 10,
+    ):
+        # SimpleGame 만 해당된다.
+        for exponent in exponent_list:
+            game = SimpleGame.from_expected_value(expected_value, exponent=exponent)
+            prob_list = dg.generate_prob_list(
+                game, participation_cost=participation_cost
+            )
+            plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Pr=1/2^{exponent}")
 
 
 if __name__ == "__main__":
