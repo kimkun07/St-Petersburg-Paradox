@@ -2,8 +2,9 @@ from typing import Callable
 from matplotlib import pyplot as plt
 from st_petersburg_paradox.game import Game
 from st_petersburg_paradox.simple_game import SimpleGame
-
 from st_petersburg_paradox.st_petersburg_game import StPetersburgGame
+
+from st_petersburg_paradox.stopwatch import Stopwatch
 from st_petersburg_paradox.utils_input import input_int_with_commas
 from st_petersburg_paradox.utils_plt import show_plot
 from st_petersburg_paradox.utils_pyinquirer import prompt_input, prompt_list
@@ -55,13 +56,13 @@ class DataGenerator:
 
 
 class ExperimentAssistant:
-    SIMPLE_GAME = "SimpleGame"
+    SIMPLE_GAME = "Simple Game"
     ST_GAME = "St Petersburg Game"
     COST_EXP = "Same probability, different costs"
     PR_EXP = "Same cost, different probability"
 
     @classmethod
-    def choose_experiment(cls) -> Callable[[int], None]:
+    def choose_experiment(cls) -> tuple[str, Callable[[int], None]]:
         """User input을 통해 Experiment 설정
 
         Returns:
@@ -79,13 +80,11 @@ class ExperimentAssistant:
 
             if experiment_choice == cls.COST_EXP:
                 launch = cls.simple_game_cost_exp()
-                return launch
             else:
                 launch = cls.simple_game_exponent_exp()
-                return launch
         else:
             launch = cls.st_peters_game_cost_exp()
-            return launch
+        return (game_choice, launch)
 
     @classmethod
     def simple_game_cost_exp(cls) -> Callable[[int], None]:
@@ -199,8 +198,11 @@ if __name__ == "__main__":
     max_n_games = int(prompt_input("Selected max_n_games: ", str(max_n_games)))
 
     plt.figure()
-    start_experiment: Callable[[int], None] = ExperimentAssistant.choose_experiment()
-    start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
-    show_plot("Game Experiment")
+    # NOTE: you may want to start several experiments
+    experiment_name, start_experiment = ExperimentAssistant.choose_experiment()
+    with Stopwatch():
+        start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
+
+    show_plot(experiment_name)
 
     input("Press Enter to close the plot...")
