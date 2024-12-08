@@ -40,7 +40,7 @@ class DataGenerator:
         return n_games_list
 
     def generate_prob_list(self, game: Game, participation_cost: int) -> list[float]:
-        """n_games에 따른 pr of profit 계산
+        """n_games에 따른 profit probability를 계산한다
 
         point[i] = (n_games[i], pr[i]) 가 될 것이다
 
@@ -61,6 +61,11 @@ class ExperimentAssistant:
 
     @classmethod
     def choose_experiment(cls):
+        """User input을 통해 Experiment 설정
+
+        Returns:
+            Callable[[int], None]: 선택된 실험을 실행하는 함수
+        """
         game_choice = prompt_list(
             message="Select the game type:", choices=[cls.SIMPLE_GAME, cls.ST_GAME]
         )
@@ -127,10 +132,20 @@ class ExperimentAssistant:
 
 
 class Experiment:
+    """실험을 수행해 pyplot에 데이터를 추가한다"""
+
     @staticmethod
     def experiment_for_different_cost(
         dg: DataGenerator, game: Game, participation_cost_list: list[int]
     ):
+        """
+        동일한 게임에 대해 비용을 변경해가며 실험한다
+
+        Args:
+            dg (DataGenerator):
+            game (Game): 게임 객체 (SimpleGame / StPetersGame)
+            participation_cost_list (list[int]):
+        """
         for cost in participation_cost_list:
             prob_list = dg.generate_prob_list(game, cost)
             plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
@@ -142,7 +157,15 @@ class Experiment:
         expected_value: int = 10,
         participation_cost: int = 10,
     ):
-        # SimpleGame 만 해당된다.
+        """
+        게임 확률을 변경해가며 실험한다 (SimpleGame에만 해당)
+
+        Args:
+            dg (DataGenerator):
+            exponent_list (list[int]):
+            expected_value (int, optional): 기대값
+            participation_cost (int, optional): 참여 비용
+        """
         for exponent in exponent_list:
             game = SimpleGame.from_expected_value(expected_value, exponent=exponent)
             prob_list = dg.generate_prob_list(
@@ -157,7 +180,7 @@ if __name__ == "__main__":
 
     plt.figure()
     start_experiment: Callable[[int], None] = ExperimentAssistant.choose_experiment()
-    start_experiment(max_n_games)
+    start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
     show_plot("Game Experiment")
 
     input("Press Enter to close the plot...")
