@@ -1,106 +1,49 @@
+from __future__ import annotations
 import math
 from scipy import stats
-import matplotlib.pyplot as plt
-
-from .Stopwatch import Stopwatch
+from st_petersburg_paradox.game import Game
 
 
-def probability_of_not_losing(n: int, p: float, payoff: float, cost: int) -> float:
-    """Play a game `n` times with probability `p` of winning $`payoff`.
-    Would you play the game with $`cost`?
+class SimpleGame(Game):
+    payoff: int
+    probability: float
 
-    Args:
-        n (int): Number of games to play.
-        p (float): Probability of winning.
-        payoff (int): Payoff if player wins.
-        cost (int): Cost to play the game.
+    def __init__(self, payoff: int, probability: float):
+        """_summary_
 
-    Returns:
-        float: Probability of not losing money.
-    """
+        Args:
+            payoff: _description_
+            probability: _description_
+        """
+        self.payoff = payoff
+        self.probability = probability
 
-    total_cost = n * cost
-    games_to_win = math.ceil(total_cost / payoff)
-
-    # X ~ Bin(n=game, p=prob_win)
-    # P(X >= games_to_win) = 1 - P(X < games_to_win)
-    prob: float = 1 - stats.binom.cdf(games_to_win - 1, n, p)
-    return prob
-
-
-def simulate(x_data: list[int], exponent: int, cost: int) -> list[float]:
-    """Given x_data, return probability_data for plot
-
-    Args:
-        x_data: List of `n`s to simulate
-        exponent: _description_
-        cost: _description_
-
-    Returns:
-        _description_
-    """
-    # E[X] = p * payoff = 10
-    p, payoff = (1 / 2) ** exponent, 10 * 2**exponent
-
-    # Simulate games
-    probabilities: list[float] = []
-    for game in x_data:
-        probabilities.append(
-            probability_of_not_losing(n=game, p=p, payoff=payoff, cost=cost)
+    @staticmethod
+    def from_expected_value(expected_value: int, exponent: int) -> SimpleGame:
+        # E[X] = payoff * pr
+        return SimpleGame(
+            payoff=expected_value * (2**exponent), probability=(1 / 2) ** exponent
         )
 
-    return probabilities
+    def __str__(self) -> str:
+        return f"SimpleGame(payoff={self.payoff}, probability={self.probability})"
 
+    def prob_profit_after_n_games(self, n_games: int, participation_cost: int):
+        """_summary_
 
-def show(title: str):
-    plt.xlabel("Number of Games")
-    plt.ylabel("Probability")
-    plt.title(title)
-    plt.legend()
-    plt.xscale("log")
-    plt.ylim(0, 1)
-    plt.grid(True)
-    plt.show(block=False)
-    plt.pause(1)  # too short interval may cause blank plot window
+        Args:
+            n_games: _description_
+            participation_cost: _description_
 
+        Returns:
+            _description_
+        """
 
-def plot_different_costs(exponent: int, simulate_max_games: int) -> None:
-    plt.figure()
+        total_cost = n_games * participation_cost
+        # Player should win `games_to_win` times for profit
+        games_to_win = math.ceil(total_cost / self.payoff)
 
-    x_data = list(range(1, simulate_max_games))
-    for cost in [9, 10, 11]:
-        y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
-        plt.plot(x_data, y_data, marker="o", label=f"Cost={cost}")
-
-    show(f"p=1/2^{exponent}")
-
-
-def plot_different_exponents(cost: int, simulate_max_games: int) -> None:
-    plt.figure()
-
-    x_data = list(range(1, simulate_max_games))
-    for exponent in [2, 10, 20]:
-        y_data = simulate(x_data=x_data, exponent=exponent, cost=cost)
-        plt.plot(x_data, y_data, marker="o", label=f"p=1/2^{exponent}")
-
-    show(f"Cost={cost}")
-
-
-def main():
-    max_games = 100_000
-    # |max_games|Elapsed Time|
-    # |---|---|
-    # |100_000|10 seconds|
-
-    print(f"Plotting 6 graph for simple_game: {max_games} games per each")
-    with Stopwatch() as sw:
-        plot_different_costs(exponent=2, simulate_max_games=max_games)
-        plot_different_costs(exponent=10, simulate_max_games=max_games)
-        plot_different_costs(exponent=20, simulate_max_games=max_games)
-
-        plot_different_exponents(cost=9, simulate_max_games=max_games)
-        plot_different_exponents(cost=10, simulate_max_games=max_games)
-        plot_different_exponents(cost=11, simulate_max_games=max_games)
-
-    print(f"Elapsed: {sw.elapsed_time()}")
-    input("Press Enter to close the plot...")
+        # X ~ Bin(n=n_games, p=probability)
+        # P(X >= games_to_win) = 1 - P(X < games_to_win)
+        prob: float = 1 - stats.binom.cdf(games_to_win - 1, n_games, self.probability)
+        return prob
