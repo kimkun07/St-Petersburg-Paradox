@@ -34,11 +34,16 @@ class DataGenerator:
         Returns:
             list[int]: 게임 횟수 목록.
         """
+
+        assert scale > 1
+
         n_games_list: list[int] = []
-        n_games = 1
-        while n_games <= max_n_games:
+        n_games = max_n_games
+        # NOTE: n_games Cannot be 1
+        #       Coupled - StPeters needs (n_games * cost) % 2 == 0
+        while n_games >= 2:
             n_games_list.append(n_games)
-            n_games *= scale
+            n_games = n_games // scale
         return n_games_list
 
     def generate_prob_list(self, game: Game, participation_cost: int) -> list[float]:
@@ -168,6 +173,9 @@ class Experiment:
         for cost in participation_cost_list:
             prob_list = dg.generate_prob_list(game, cost)
             plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
+
+        if isinstance(game, StPetersburgGame):
+            game.save_cache()
 
     @staticmethod
     def experiment_for_different_exponent(
