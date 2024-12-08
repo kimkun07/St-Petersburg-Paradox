@@ -18,29 +18,32 @@ class StPetersburgGame(Game):
             float: profit probability
         """
         total_cost = n_games * participation_cost
+
+        # NOTE: We divide all index by 2
         assert total_cost % 2 == 0
+        end_index = total_cost // 2
 
         # 1. Pre-caculate X_i ~ St
-        X_i: dict[int, Decimal] = {2: Decimal(1) / Decimal(2)}
+        X_i: dict[int, Decimal] = {2 // 2: Decimal(1) / Decimal(2)}
         winning = 4
         while winning < total_cost:
-            X_i[winning] = Decimal(1) / Decimal(winning)
+            X_i[winning // 2] = Decimal(1) / Decimal(winning)
             winning *= 2
-        X_i[total_cost] = Decimal(1) / Decimal(winning // 2)
+        X_i[end_index] = Decimal(1) / Decimal(winning // 2)
 
         # 2. Iterate every trial to find Pr(X >= winning)
-        X: list[Decimal] = [Decimal(0) for _ in range(total_cost + 1)]
+        X: list[Decimal] = [Decimal(0) for _ in range(end_index + 1)]
 
         # First trial: use X_i
         for winning, pr in X_i.items():
             X[winning] = pr
 
         for _ in range(1, n_games):
-            next_X = [Decimal(0) for _ in range(total_cost + 1)]
-            for winning_prev in range(2, total_cost + 1, 2):
+            next_X = [Decimal(0) for _ in range(end_index + 1)]
+            for winning_prev in range(1, end_index + 1):
                 for winning, pr in X_i.items():
-                    winning_next = min(winning_prev + winning, total_cost)
+                    winning_next = min(winning_prev + winning, end_index)
                     next_X[winning_next] = next_X[winning_next] + X[winning_prev] * pr
             X = next_X
 
-        return float(X[total_cost])
+        return float(X[total_cost // 2])
