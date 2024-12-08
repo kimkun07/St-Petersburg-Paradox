@@ -1,75 +1,45 @@
-import math
-import matplotlib.pyplot as plt
-
-from .Stopwatch import Stopwatch
+from decimal import Decimal
+from st_petersburg_paradox.game import Game
 
 
-def probability_of_not_losing(n: int, cost: int) -> float:
-    total_cost = n * cost
+class StPetersburgGame(Game):
+    def __init__(self):
+        pass
 
-    # 1. Pre-caculate X_i ~ St
-    X_i: dict[int, Decimal] = {2: Decimal(1) / Decimal(2)}
-    winning = 4
-    while winning < total_cost:
-        X_i[winning] = Decimal(1) / Decimal(winning)
-        winning *= 2
-    X_i[total_cost] = Decimal(1) / Decimal(winning // 2)
+    def prob_profit_after_n_games(self, n_games: int, participation_cost: int) -> float:
+        """
+        n_games에 따른 profit probability를 계산한다
 
-    # 2. Iterate every trial to find Pr(X >= winning)
-    X: list[Decimal] = [Decimal(0) for _ in range(total_cost + 1)]
+        Args:
+            n_games (int): 게임 횟수
+            participation_cost (int): 한 게임 참여 비용
 
-    # First trial: use X_i
-    for winning, pr in X_i.items():
-        X[winning] = pr
+        Returns:
+            float: profit probability
+        """
+        total_cost = n_games * participation_cost
 
-    for _ in range(1, n):
-        next_X = [Decimal(0) for _ in range(total_cost + 1)]
-        for winning_prev in range(1, total_cost + 1):
-            for winning, pr in X_i.items():
-                winning_next = min(winning_prev + winning, total_cost)
-                next_X[winning_next] = next_X[winning_next] + X[winning_prev] * pr
-        X = next_X
+        # 1. Pre-caculate X_i ~ St
+        X_i: dict[int, Decimal] = {2: Decimal(1) / Decimal(2)}
+        winning = 4
+        while winning < total_cost:
+            X_i[winning] = Decimal(1) / Decimal(winning)
+            winning *= 2
+        X_i[total_cost] = Decimal(1) / Decimal(winning // 2)
 
-    return float(X[total_cost])
+        # 2. Iterate every trial to find Pr(X >= winning)
+        X: list[Decimal] = [Decimal(0) for _ in range(total_cost + 1)]
 
+        # First trial: use X_i
+        for winning, pr in X_i.items():
+            X[winning] = pr
 
-def simulate(x_data: list[int], cost: int) -> list[float]:
-    """Given x_data, return probability_data for plot
+        for _ in range(1, n_games):
+            next_X = [Decimal(0) for _ in range(total_cost + 1)]
+            for winning_prev in range(1, total_cost + 1):
+                for winning, pr in X_i.items():
+                    winning_next = min(winning_prev + winning, total_cost)
+                    next_X[winning_next] = next_X[winning_next] + X[winning_prev] * pr
+            X = next_X
 
-    Args:
-        x_data: List of `n`s to simulate
-        exponent: _description_
-        cost: _description_
-
-    Returns:
-        _description_
-    """
-    # Simulate games
-    probabilities: list[float] = []
-    for game in x_data:
-        probabilities.append(probability_of_not_losing(n=game, cost=cost))
-
-    return probabilities
-
-
-def show(title: str):
-    plt.xlabel("Number of Games")
-    plt.ylabel("Probability")
-    plt.title(title)
-    plt.legend()
-    plt.xscale("log")
-    plt.ylim(0, 1)
-    plt.grid(True)
-    plt.show(block=False)
-    plt.pause(1)  # too short interval may cause blank plot window
-
-
-def plot_different_costs(simulate_max_games: int) -> None:
-    plt.figure()
-
-    x_data = list(range(1, simulate_max_games, 100))
-    for cost in [10]:
-        y_data = simulate(x_data=x_data, cost=cost)
-        plt.plot(x_data, y_data, marker="o", label=f"Cost={cost}")
-
-    show(f"St. Petersburg Game")
+        return float(X[total_cost])

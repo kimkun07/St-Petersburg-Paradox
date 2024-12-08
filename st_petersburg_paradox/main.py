@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from st_petersburg_paradox.game import Game
 from st_petersburg_paradox.simple_game import SimpleGame
 
+from st_petersburg_paradox.st_petersburg_game import StPetersburgGame
 from st_petersburg_paradox.utils_input import input_int_with_commas
 from st_petersburg_paradox.utils_plt import show_plot
 from st_petersburg_paradox.utils_pyinquirer import prompt_input, prompt_list
@@ -60,7 +61,7 @@ class ExperimentAssistant:
     PR_EXP = "Same cost, different probability"
 
     @classmethod
-    def choose_experiment(cls):
+    def choose_experiment(cls) -> Callable[[int], None]:
         """User input을 통해 Experiment 설정
 
         Returns:
@@ -83,7 +84,8 @@ class ExperimentAssistant:
                 launch = cls.simple_game_exponent_exp()
                 return launch
         else:
-            game = StPetersburgGame()
+            launch = cls.st_peters_game_cost_exp()
+            return launch
 
     @classmethod
     def simple_game_cost_exp(cls) -> Callable[[int], None]:
@@ -126,6 +128,24 @@ class ExperimentAssistant:
 
             return Experiment.experiment_for_different_exponent(
                 dg, exponent_list, expected_value, participation_cost
+            )
+
+        return launch
+
+    @classmethod
+    def st_peters_game_cost_exp(cls) -> Callable[[int], None]:
+        cost_str = prompt_input(
+            "Cost experiments delimitered by space: ", default="9 10 11"
+        )
+        participation_cost_list = list(map(int, cost_str.split()))
+
+        game = StPetersburgGame()
+
+        def launch(max_n_games: int):
+            dg = DataGenerator(max_n_games=max_n_games)
+
+            return Experiment.experiment_for_different_cost(
+                dg, game, participation_cost_list
             )
 
         return launch
