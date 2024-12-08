@@ -18,6 +18,7 @@ class StPetersburgGame(Game):
             float: profit probability
         """
         total_cost = n_games * participation_cost
+        assert total_cost % 2 == 0
 
         # 1. Pre-caculate X_i ~ St
         X_i: dict[int, Decimal] = {2: Decimal(1) / Decimal(2)}
@@ -36,7 +37,7 @@ class StPetersburgGame(Game):
 
         for _ in range(1, n_games):
             next_X = [Decimal(0) for _ in range(total_cost + 1)]
-            for winning_prev in range(1, total_cost + 1):
+            for winning_prev in range(2, total_cost + 1, 2):
                 for winning, pr in X_i.items():
                     winning_next = min(winning_prev + winning, total_cost)
                     next_X[winning_next] = next_X[winning_next] + X[winning_prev] * pr
