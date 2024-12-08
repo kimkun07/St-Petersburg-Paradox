@@ -146,6 +146,7 @@ class ExperimentAssistant:
             "Cost experiments delimitered by space: ", default="9 10 11"
         )
         participation_cost_list = list(map(int, cost_str.split()))
+        participation_cost_list = list(reversed(sorted(participation_cost_list)))
 
         game = StPetersburgGame()
 

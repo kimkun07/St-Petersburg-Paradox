@@ -1,0 +1,1 @@
+- PyInquirer 에러 존재 (Issue #198)
