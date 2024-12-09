@@ -36,6 +36,9 @@ class DataGenerator:
             list[int]: 게임 횟수 목록.
         """
 
+        if scale == 1:
+            return [n for n in range(max_n_games, 2 - 1, -1)]
+
         assert scale > 1
 
         n_games_list: list[int] = []
@@ -113,7 +116,7 @@ class ExperimentAssistant:
         game = SimpleGame.from_expected_value(expected_value, exponent=exponent)
 
         def launch(max_n_games: int):
-            dg = DataGenerator(max_n_games=max_n_games)
+            dg = DataGenerator(max_n_games=max_n_games, scale=1)
 
             return Experiment.experiment_for_different_cost(
                 dg, game, participation_cost_list
@@ -133,7 +136,7 @@ class ExperimentAssistant:
         exponent_list = list(map(int, cost_str.split()))
 
         def launch(max_n_games: int):
-            dg = DataGenerator(max_n_games=max_n_games)
+            dg = DataGenerator(max_n_games=max_n_games, scale=1)
 
             return Experiment.experiment_for_different_exponent(
                 dg, exponent_list, expected_value, participation_cost
@@ -219,7 +222,7 @@ if __name__ == "__main__":
     # Set Decimal() precision
     decimal.getcontext().prec = 50
 
-    max_n_games = input_int_with_commas("Enter max_n_games: ", default=1_000_000)
+    max_n_games = input_int_with_commas("Enter max_n_games: ", default=10_000)
     max_n_games = int(prompt_input("Selected max_n_games: ", str(max_n_games)))
     show_many_figures = False
 
