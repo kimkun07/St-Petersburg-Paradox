@@ -3,4 +3,6 @@
 *.fls
 *.synctex.gz
 *.toc
+*.bbl
+*.blg
 작성지침.pdf
