@@ -1,16 +1,61 @@
-\documentclass[a4paper,11pt]{report}
-\usepackage{kotex}
-% 본문 내용 : 글자크기 11pt 정도, 줄간격 170 이상, 장평 100, 자간 0
-\linespread{1.4} % 줄간격 170인듯?
+\documentclass[11pt]{report}
+% 글자크기 11pt 정도
 
-% 각주 : 글자 크기 9~10pt
-
+% 용지 여백
+\usepackage{geometry}
+\geometry{
+  a4paper,
+  left=25mm,
+  right=25mm,
+  top=30mm,
+  bottom=15mm
+  }
+  
 % 서체 : 명조체나 신명조체 류
+\usepackage{kotex}
+\usepackage{fix-cm}
 
-% 용지 여백 : 위쪽 30, 아래쪽 15, 왼쪽 25, 오른쪽 25
+% 본문 내용 : 줄간격 170 이상, 장평 100, 자간 0
+\linespread{1.4} % 줄간격 170
 
+
+% 캡션 prefix 설정 (Figure 3.1: -> 그림 1.)
+\usepackage{caption}
+\counterwithout{figure}{chapter} % continuous figure throughout entire document
+\captionsetup[figure]{labelformat=simple, labelsep=period}
+\renewcommand{\figurename}{그림}
+
+% 제목 서식 조정
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\normalfont\fontsize{16pt}{20pt}\bfseries\filcenter} % 글꼴 크기 및 굵기
+  {제 \thechapter \space 장} % 제목 형식
+  {10pt}                % 번호와 제목 간 간격
+  {}
+
+\titleformat{\section}
+  {\normalfont\fontsize{14pt}{17pt}\bfseries}
+  {제 \thesection \space 절}
+  {10pt}
+  {}
+  
+% Chapter, Section의 여백 설정
+\titlespacing{\chapter}{0pt}{0pt}{20pt}
+\titlespacing*{\section}
+  {0pt}{20pt}{10pt} % 왼쪽 여백, 위 여백, 아래 여백
+
+% Section 번호 설정 (3.1절 -> 1절)
+\renewcommand{\thesection}{\arabic{section}} % 섹션 번호 형식 변경
+\makeatletter
+\@addtoreset{section}{chapter} % Chapter가 바뀔 때 Section 번호 리셋
+\makeatother
+
+\usepackage{amsmath}
 \usepackage{graphicx}
 \graphicspath{ {../images/} }
+
+\usepackage[numbers]{natbib}
+\usepackage{setspace}
 
 \begin{document}
 
@@ -27,38 +72,28 @@
 \end{titlepage}
 
 % 논문 순서 3: 국문초록
-\begin{abstract}
-  \input{00-abstract-ko.tex}
-\end{abstract}
+\input{00-abstract-ko.tex}
 
 % 논문 순서 4: 목차
 \tableofcontents
 
 % 논문 순서 5: 본문
-\chapter{서론}
 \input{01-intro.tex}
-
-\chapter{이론적 배경}
 \input{02-background.tex}
-
-\chapter{간단한 게임}
 \input{03-simple-game.tex}
-
-\chapter{주장}
-\input{04-statement.tex}
-
-\chapter{St. Petersburg Game}
-\input{05-st-petersburg-game.tex}
-
-\chapter{결론}
+\input{04-st-petersburg-game.tex}
+\input{05-discussion.tex}
+\input{06-conclusion.tex}
 
 % 논문 순서 6: 참고문헌
+\renewcommand{\bibname}{참고문헌}
+\nocite{*}
+\bibliographystyle{apalike-kr} % 사용자 정의 .bst 파일 지정
+\bibliography{ref}
 
 % 논문 순서 7: (부록)
 
 % 논문 순서 8: 영문초록
-\begin{abstract}
-  \input{00-abstract-en.tex}
-\end{abstract}
+\input{00-abstract-en.tex}
 
 \end{document}

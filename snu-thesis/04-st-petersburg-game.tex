@@ -1,0 +1,14 @@
+\chapter{St. Petersburg 게임의 분석}
+
+이제 St. Petersburg 역설을 $\mathcal{M}_n(X, C)$를 활용하여 분석할 수 있다. 그림 4는 St. Petersburg 게임에서 시행 횟수 $n$에 따른 이익 확률의 변화를 나타내며, 이를 통해 다음과 같은 사실을 알 수 있다.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{St_petersburg_game/10 16 24 32.png}
+  \captionsetup{width=0.7\textwidth}
+  \caption{St. Petersburg 게임에서 시행 횟수 $n$에 따른 이익 확률의 변화. 각각의 곡선은 다른 참가 비용(10원, 16원, 20원, 32원)에 대한 결과를 나타낸다.}
+\end{figure}
+
+첫째, 참가 비용 $C$에 무관하게 보상의 기댓값이 항상 참가 비용보다 크기 때문에, 이익 확률 $P_n(X, C)$는 $n$이 증가함에 따라 1로 수렴한다. 따라서 의사결정자가 고려하는 반복 시행 횟수 $n$이 무한히 크다면, $\mathcal{M}_n(X^{(m)}, C)$에 기반한 의사결정은 $C$와 관계없이 게임에 참가하는 결론에 도달한다.
+
+둘째, 참가 비용 $C$가 증가할수록 이익 확률의 수렴 속도가 느려진다. 이에 따라 의사결정자의 파라미터 $n$이 유한한 값으로 정해진 경우, $\mathcal{M}_n(X^{(m)}, C)$가 내리는 결정은 참가 비용에 따라 다랄질 수 있다. 예를 들어, 의사결정자가 반복 시행 횟수 $n=10^4$로 고려할 때, $\mathcal{M}_n(X, 10)$은 게임 참가를 결정하지만 $\mathcal{M}_n(X, 16)$은 게임을 공정하다고 판단하며, $\mathcal{M}_n(X, 20)$은 게임 참가를 거부하는 결정을 내린다.
