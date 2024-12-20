@@ -1,3 +1,5 @@
+% apalike-kr 정렬: language=korean을 먼저 나열한다.
+
 % BibTeX `apalike' bibliography style (version 0.99a, 8-Dec-10), adapted from
 % the `alpha' style, version 0.99a; for BibTeX version 0.99a.
 %
@@ -63,6 +65,7 @@ ENTRY
     type
     volume
     year
+    language
   }
   {}
   { label extra.label sort.label }
@@ -1065,8 +1068,14 @@ REVERSE {reverse.pass}
 %                               on sort.label then year then title.  This is
 %                               for the second sorting pass.
 FUNCTION {bib.sort.order}
-{ sort.label
-  "    "
+{ language field.or.null sortify
+  "korean" =
+    { "A" }
+    { "B" }
+  if$
+  "    " % First entry of this function needs "   " (?)
+  *
+  sort.label
   *
   year field.or.null sortify
   *
