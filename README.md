@@ -19,7 +19,7 @@ This project is used for paper analyzing the St. Petersburg Paradox.
   </tr>
 </table>
 
-[한글 논문](), [English Paper]()
+[한글 논문](https://tricolor-calliandra-b4f.notion.site/St-Petersburg-15f990798a6580eebf61f5d1b085ccff), [English Paper](https://tricolor-calliandra-b4f.notion.site/An-Interpretation-of-the-St-Petersburg-Paradox-using-a-Trial-Probability-of-Profit-Model-163990798a658097b078c51743483df1?pvs=74)
 
 ## Getting Started
 
@@ -42,4 +42,4 @@ This project is used for paper analyzing the St. Petersburg Paradox.
     ```
 
 > [!CAUTION]
-> pyinquirer 1.0.3 is incompatible with python 3.10 or above. Try updating pyinquirer if it has been updated, or modify pyinquirer code yourself. Check [Issue #198](https://github.com/CITGuru/PyInquirer/issues/198) for more detail.
+> pyinquirer 1.0.3 is incompatible with python 3.10 or above. Try updating pyinquirer if it has been updated, or modify pyinquirer code yourself. Check [Issue #198](https://github.com/CITGuru/PyInquirer/issues/198) for details.
