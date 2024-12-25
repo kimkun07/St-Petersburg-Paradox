@@ -2,11 +2,30 @@
 
 This project is used for paper analyzing the St. Petersburg Paradox.
 
-<p align="center">
-  <img src="images/simple_game/E=2.png" alt="Result for Simple Game" width="30%">
-  <img src="images/simple_game/cost=10.png" alt="Result for Simple Game" width="30%">
-  <img src="images/St_petersburg_game/10 16 24 32.png" alt="Result for St. Petersburg Game" width="30%">
-</p>
+<style>
+  .image-row {
+    display: flex;
+  }
+  .image-row figure {
+    text-align: center;
+    margin: 4px;
+  }
+</style>
+
+<div class="image-row">
+  <figure>
+    <img src="images/simple_game/E=2.png" alt="Result for Simple Game">
+    <figcaption>Simple Game<br>with different cost</figcaption>
+  </figure>
+  <figure>
+    <img src="images/simple_game/cost=10.png" alt="Result for Simple Game">
+    <figcaption>Simple Game<br>with different probability</figcaption>
+  </figure>
+  <figure>
+    <img src="images/St_petersburg_game/10 16 24 32.png" alt="Result for St. Petersburg Game">
+    <figcaption>St. Petersburg Game</figcaption>
+  </figure>
+</div>
 
 [한글 논문](), [English Paper]()
 
