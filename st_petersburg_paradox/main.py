@@ -221,6 +221,11 @@ class Experiment:
             plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Pr=1/2^{exponent}")
 
 
+def _generate_profit_histogram():
+    StPetersburgGame()._show_profit_distribution()
+    exit()
+
+
 if __name__ == "__main__":
     # Set Decimal() precision
     decimal.getcontext().prec = 50

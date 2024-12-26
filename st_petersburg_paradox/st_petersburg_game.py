@@ -115,3 +115,58 @@ class StPetersburgGame(Game):
                 current_n_index = min(current_n_index + 1, len(n_games) - 1)
 
         return result
+
+    def _show_profit_distribution(self, n_games: int = 5, participation_cost: int = 6):
+        total_cost = n_games * participation_cost
+
+        S = [Decimal(0) for _ in range(total_cost + 1)]
+        next_S = [Decimal(0) for _ in range(total_cost + 1)]
+
+        # 1. Pre-caculate X_i ~ St
+        X_i: dict[int, Decimal] = {2: Decimal(1) / Decimal(2)}
+        winning = 4
+        while winning < total_cost:
+            X_i[winning] = Decimal(1) / Decimal(winning)
+            winning *= 2
+        X_i[total_cost] = Decimal(1) / Decimal(winning // 2)
+
+        from matplotlib import pyplot as plt
+
+        plt.bar(list(X_i.keys()), [float(pr) for pr in X_i.values()])
+        plt.xlabel("Winning")
+        plt.xlim(left=2, right=total_cost)
+        plt.ylabel("Probability")
+        plt.ylim((0, 1))
+        plt.title("Winning distribution of single trial")
+        plt.show()
+
+        # 2. Iterate every game to find Pr(X >= winning)
+        # First game: use X_i
+        for winning, pr in X_i.items():
+            S[winning] = pr
+
+        plt.subplot(n_games, 1, 1)
+        plt.title("Distribution of S_i after i-th trial")
+        plt.xlabel("Total Winning")
+        plt.ylabel("Probability")
+        plt.xlim(left=2, right=total_cost)
+        plt.ylim((0, 1))
+        plt.bar(range(total_cost + 1), [float(pr) for pr in S])
+
+        for t in range(2, n_games + 1):
+            next_S = [Decimal(0) for _ in range(total_cost + 1)]
+            for winning_prev in range(1, total_cost + 1):
+                for winning, pr in X_i.items():
+                    winning_next = min(winning_prev + winning, total_cost)
+                    next_S[winning_next] = next_S[winning_next] + S[winning_prev] * pr
+            S = next_S
+
+            # Plot histogram of S
+            plt.subplot(n_games, 1, t)
+            plt.xlabel("Total Winning")
+            plt.ylabel("Probability")
+            plt.xlim(left=2, right=total_cost)
+            plt.ylim((0, 1))
+            plt.bar(range(total_cost + 1), [float(pr) for pr in S])
+
+        plt.show()
