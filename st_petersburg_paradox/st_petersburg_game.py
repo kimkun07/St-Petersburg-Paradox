@@ -1,8 +1,8 @@
 import decimal
 from functools import reduce
 from decimal import Decimal
+from tqdm import tqdm
 from st_petersburg_paradox.game import Game
-from st_petersburg_paradox.stopwatch import Stopwatch
 
 
 class StPetersburgGame(Game):
@@ -70,7 +70,7 @@ class StPetersburgGame(Game):
 
         # Allocate all memories first
         print(f"Decimal precision set to: {decimal.getcontext().prec}")
-        print("Try allocating...")
+        print("Try allocating memories... OutOfMemory might happen")
         S = [Decimal(0) for _ in range(end_index + 1)]
         next_S = [Decimal(0) for _ in range(end_index + 1)]
         result: list[list[float]] = [
@@ -94,11 +94,8 @@ class StPetersburgGame(Game):
         assert n_games[0] > 1
         current_n_index = 0
 
-        st = Stopwatch("t: 1 - 100")
-        st.start()
-        for t in range(2, max(n_games) + 1):
+        for t in tqdm(range(2, max(n_games) + 1)):
             next_S = [Decimal(0) for _ in range(end_index + 1)]
-            # TODO: Parallelize this
             for winning_prev in range(1, end_index + 1):
                 for winning, pr in X_i.items():
                     winning_next = min(winning_prev + winning, end_index)
@@ -116,11 +113,5 @@ class StPetersburgGame(Game):
                         )
                     )
                 current_n_index = min(current_n_index + 1, len(n_games) - 1)
-            if t % 100 == 0:
-                st.stop()
-
-                st.name = f"t: {t + 1} - {t + 100}"
-                st.start()
-        st.stop()
 
         return result

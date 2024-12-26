@@ -1,6 +1,7 @@
 import decimal
 from typing import Callable
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 from st_petersburg_paradox.game import Game
 from st_petersburg_paradox.simple_game import SimpleGame
 from st_petersburg_paradox.st_petersburg_game import StPetersburgGame
@@ -64,7 +65,9 @@ class DataGenerator:
         """
         return [
             game.prob_profit_after_n_games(n_games, participation_cost)
-            for n_games in self.n_games_list
+            for n_games in tqdm(
+                self.n_games_list, desc="Iterating over n(x axis)", leave=False
+            )
         ]
 
 
@@ -176,7 +179,7 @@ class Experiment:
             game (Game): 게임 객체 (SimpleGame / StPetersGame)
             participation_cost_list (list[int]):
         """
-        for cost in participation_cost_list:
+        for cost in tqdm(participation_cost_list, desc="Changing Cost"):
             prob_list = dg.generate_prob_list(game, cost)
             plt.plot(dg.n_games_list, prob_list, marker="o", label=f"Cost={cost}")
 
@@ -210,7 +213,7 @@ class Experiment:
             expected_value (int, optional): 기대값
             participation_cost (int, optional): 참여 비용
         """
-        for exponent in exponent_list:
+        for exponent in tqdm(exponent_list, desc="Changing Probability"):
             game = SimpleGame.from_expected_value(expected_value, exponent=exponent)
             prob_list = dg.generate_prob_list(
                 game, participation_cost=participation_cost
@@ -229,8 +232,7 @@ if __name__ == "__main__":
     plt.figure()
     # NOTE: you may want to start several experiments
     experiment_name, start_experiment = ExperimentAssistant.choose_experiment()
-    with Stopwatch():
-        start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
+    start_experiment(max_n_games)  # experiment는 plt에 data를 올린다
 
     show_plot(experiment_name, show_many_figures)
     if show_many_figures:

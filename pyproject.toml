@@ -11,6 +11,7 @@ python = "^3.13"
 scipy = "^1.14.1"
 matplotlib = "^3.9.2"
 pyinquirer = "^1.0.3"
+tqdm = "^4.67.1"
 
 [tool.pyright]
 reportUnknownMemberType = false # Suppress for matplotlib
